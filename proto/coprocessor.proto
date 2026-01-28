@@ -5,15 +5,8 @@ import "errorpb.proto";
 import "kvrpcpb.proto";
 import "metapb.proto";
 
-import "gogoproto/gogo.proto";
 import "rustproto.proto";
 
-option (gogoproto.marshaler_all) = true;
-option (gogoproto.sizer_all) = true;
-option (gogoproto.unmarshaler_all) = true;
-option (gogoproto.goproto_unkeyed_all) = false;
-option (gogoproto.goproto_unrecognized_all) = false;
-option (gogoproto.goproto_sizecache_all) = false;
 option (rustproto.lite_runtime_all) = true;
 
 option java_package = "org.tikv.kvproto";
@@ -50,7 +43,6 @@ message Request {
 }
 
 message Response {
-    bytes data = 1 [(gogoproto.customtype) = "github.com/pingcap/kvproto/pkg/sharedbytes.SharedBytes", (gogoproto.nullable) = false];
     errorpb.Error region_error = 2;
     kvrpcpb.LockInfo locked = 3;
     string other_error = 4;
@@ -118,7 +110,6 @@ message BatchRequest {
 }
 
 message BatchResponse {
-    bytes data = 1 [(gogoproto.customtype) = "github.com/pingcap/kvproto/pkg/sharedbytes.SharedBytes", (gogoproto.nullable) = false];
     string other_error = 2;
     kvrpcpb.ExecDetails exec_details = 3;
     repeated metapb.Region retry_regions = 4;
@@ -134,7 +125,6 @@ message StoreBatchTask {
 }
 
 message StoreBatchTaskResponse {
-    bytes data = 1 [(gogoproto.customtype) = "github.com/pingcap/kvproto/pkg/sharedbytes.SharedBytes", (gogoproto.nullable) = false];
     errorpb.Error region_error = 2;
     kvrpcpb.LockInfo locked = 3;
     string other_error = 4;

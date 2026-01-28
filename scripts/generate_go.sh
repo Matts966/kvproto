@@ -18,7 +18,8 @@ fi
 GO_PREFIX_PATH=github.com/pingcap/kvproto/pkg
 export PATH=$KVPROTO_ROOT/_tools/bin:$GOPATH/bin:$PATH
 
-go install github.com/gogo/protobuf/protoc-gen-gofast
+go install google.golang.org/protobuf/cmd/protoc-gen-go
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 go install golang.org/x/tools/cmd/goimports
 
@@ -48,7 +49,12 @@ ret=0
 
 function gen() {
     base_name=$(basename $1 ".proto")
-    protoc -I.:../include --grpc-gateway_out=logtostderr=true:../pkg/$base_name --gofast_out=plugins=grpc,$GO_OUT_M:../pkg/$base_name $1 || ret=$?
+    protoc -I.:../include \
+      --go_opt=paths=source_relative \
+      --go-grpc_opt=paths=source_relative \
+      --go_opt=Mgoogle/protobuf/descriptor.proto=google.golang.org/protobuf/types/descriptorpb \
+      --go-grpc_opt=Mgoogle/protobuf/descriptor.proto=google.golang.org/protobuf/types/descriptorpb \
+      --grpc-gateway_out=logtostderr=true:../pkg/$base_name --go_out=$GO_OUT_M:../pkg/$base_name --go-grpc_out=$GO_OUT_M:../pkg/$base_name $1 || ret=$?
     cd ../pkg/$base_name
     sed_inplace -E '/_ \"gogoproto\"/d' *.pb*.go
     sed_inplace -E '/context \"context\"/d' *.pb*.go
